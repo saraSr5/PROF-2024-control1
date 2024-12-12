@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'jacoco' // Añadir el plugin JaCoCo
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    implementation 'com.google.guava:guava:32.1.2-jre' 
+
+    // Dependencia de Mockito para pruebas unitarias
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0' 
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12" // Última versión estable de JaCoCo
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'BUNDLE' // Cobertura a nivel de proyecto completo
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 1.0 // 100% de cobertura
+            }
+        }
+    }
+}
+
+// Asegurarse de que la verificación se ejecute después de las pruebas
+check.dependsOn jacocoTestCoverageVerification
+
+// Configuración de la tarea test para generar el reporte de cobertura
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy tasks.jacocoTestReport // Al finalizar los tests, generar el reporte de JaCoCo
+}
