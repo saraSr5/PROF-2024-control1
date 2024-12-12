@@ -23,45 +23,36 @@ java {
     }
 }
 
-// Configuración de JaCoCo
 jacoco {
-    toolVersion = '0.8.8' 
+    toolVersion = "0.8.12" // Última versión estable de JaCoCo
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-
-    finalizedBy jacocoTestReport 
-}
-
-task jacocoTestReport(type: JacocoReport) {
-    dependsOn test 
-
+jacocoTestReport {
+    dependsOn test
     reports {
-        xml.enabled true
-        html.enabled true
+        xml.required.set(true)
+        html.required.set(true)
     }
-
-    // Se define qué clases se deben analizar para la cobertura
-    sourceDirectories.setFrom(files("src/main/java"))
-    classDirectories.setFrom(files("build/classes/java/main"))
-    executionData.setFrom(files("build/jacoco/test.exec"))
 }
 
 jacocoTestCoverageVerification {
     violationRules {
         rule {
+            element = 'BUNDLE' // Cobertura a nivel de proyecto completo
             limit {
-                minimum = '1.0' //Asegura que la cobertura mínima sea del 100%
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 1.0 // 100% de cobertura
             }
         }
     }
 }
 
-tasks.check {
-    dependsOn jacocoTestCoverageVerification 
-}
+// Asegurarse de que la verificación se ejecute después de las pruebas
+check.dependsOn jacocoTestCoverageVerification
 
-tasks.named("build") {
-    dependsOn tasks.named("check") 
+// Configuración de la tarea test para generar el reporte de cobertura
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy tasks.jacocoTestReport // Al finalizar los tests, generar el reporte de JaCoCo
 }
