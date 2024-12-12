@@ -3,6 +3,8 @@ package es.upm.grise.prof.curso2024.control1;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CustomerTest {
 
@@ -56,6 +58,36 @@ public class CustomerTest {
 
         // El saldo más alto es de ACCOUNT_2
         assertEquals(ACCOUNT_3_NAME, accHighBalance, "La cuenta con el mayor saldo es ACC3");
+    }
+
+    @Test
+    public void correctAccountNumberMockito() throws NoAccountsException {
+        // Creo un mock del Customer
+        Customer customer = new Customer();
+
+        // Creo mocks para las cuentas (Account)
+        Account account1 = mock(Account.class);
+        Account account2 = mock(Account.class);
+        Account account3 = mock(Account.class);
+
+        // Configuro los comportamientos de lo mocks
+        when(account1.getAccountNumber()).thenReturn(ACCOUNT_1_NAME);
+        when(account1.getCurrentBalance()).thenReturn(ACCOUNT_1_BALANCE);
+
+        when(account2.getAccountNumber()).thenReturn(ACCOUNT_2_NAME);
+        when(account2.getCurrentBalance()).thenReturn(ACCOUNT_2_BALANCE);
+
+        when(account3.getAccountNumber()).thenReturn(ACCOUNT_3_NAME);
+        when(account3.getCurrentBalance()).thenReturn(ACCOUNT_3_BALANCE);
+
+        // Agrego las cuentas al cliente
+        customer.addTransaction(account1);
+        customer.addTransaction(account2);
+        customer.addTransaction(account3);
+
+        String accountWithHighestBalance = customer.getAccountWithHighestBalance();
+
+        assertEquals(ACCOUNT_3_NAME, accountWithHighestBalance, "La cuenta con el mayor saldo debe ser ACC3");
     }
 
 }
