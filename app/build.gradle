@@ -16,6 +16,9 @@ dependencies {
     
     // Asegúrate de que la versión de Guava esté correctamente especificada
     implementation 'com.google.guava:guava:32.1.2-jre' // Versión completa
+
+    // Dependencia de Mockito para pruebas unitarias
+    testImplementation 'org.mockito:mockito-core:5.5.0' // Usa la versión más reciente compatible
 }
 
 java {
